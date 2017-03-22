@@ -1,0 +1,29 @@
+
+Node class
+{
+  left: Node
+  right: Node
+  value: Integer
+}
+
+largestSum(Node node) -> Integer
+{
+  if left == null and right == null
+    return node.value
+
+  if left == null
+    return largestSum(right) + node.value
+
+  if right == null
+    return largestSum(left) + node.value
+
+  return max(largestSum(left), largestSum(right)) + node.value
+}
+
+max(val1: Integer, val2: Integer) -> Integer
+{
+  if val1 > val2
+    return val1
+  else
+    return val2
+}
