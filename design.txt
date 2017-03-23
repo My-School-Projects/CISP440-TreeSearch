@@ -1,12 +1,56 @@
 
 Node class
 {
+  parent: Node
   left: Node
   right: Node
   value: Integer
 }
 
-largestSum(Node node) -> Integer
+largestSumBFS(Node node) -> Integer
+{
+  q: Queue of Node
+  leaves: List of Node
+
+  q.enque(node)
+
+  while not q.empty()
+  {
+    # leaf nodes are added to leaves
+    if q.front().left == null and q.front().right == null
+      leaves.append(q.front())
+
+    if q.front().left != null
+      q.enque(q.front().left)
+
+    if q.front().right != null
+      q.enque(q.front().right)
+
+    q.deque()
+  }
+
+  max := 0
+
+  for leaf in leaves
+  {
+    # traverse up the chain, accumulating pathSum
+    node := leaf
+    pathSum := 0
+    while node.parent != null
+    {
+      pathSum := pathSum + node.value
+      node := node.parent
+    }
+    # find the greatest pathSum
+    if pathSum > max
+    {
+      max := pathSum
+    }
+  }
+  return max
+}
+
+largestSumDFS(Node node) -> Integer
 {
   if node.left == null and node.right == null
     return node.value
