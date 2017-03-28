@@ -1,53 +1,53 @@
 
 Node class
 {
-  parent: Node
   left: Node
   right: Node
   value: Integer
+  pathCost: Integer
 }
 
 largestSumBFS(Node node) -> Integer
 {
   q: Queue of Node
-  leaves: List of Node
 
+  maxCost := 0
+  node.pathCost := node.value
   q.enque(node)
 
   while not q.empty()
   {
-    # leaf nodes are added to leaves
-    if q.front().left == null and q.front().right == null
-      leaves.append(q.front())
+    n := q.deque()
 
-    if q.front().left != null
-      q.enque(q.front().left)
-
-    if q.front().right != null
-      q.enque(q.front().right)
-
-    q.deque()
-  }
-
-  max := 0
-
-  for leaf in leaves
-  {
-    # traverse up the chain, accumulating pathSum
-    node := leaf
-    pathSum := 0
-    while node.parent != null
+    if (n.right == null AND n.left == null)
     {
-      pathSum := pathSum + node.value
-      node := node.parent
+      if (n.pathCost > maxCost)
+        {
+          maxCost := n.pathCost
+        }
     }
-    # find the greatest pathSum
-    if pathSum > max
+    if (n.right != null)
     {
-      max := pathSum
+      # only assign a new path cost if the current cost
+      # is greater than any previous path cost
+      cost := n.pathCost + n.right.value
+      if (cost > n.right.pathCost)
+      {
+        n.right.pathCost := cost
+      }
+      q.enque(n.right)
+    }
+    if (n.left != null)
+    {
+      cost := n.pathCost + n.left.value
+      if (cost > n.left.pathCost)
+      {
+        n.left.pathCost := cost
+      }
+      q.enque(n.left)
     }
   }
-  return max
+  return maxCost
 }
 
 largestSumDFS(Node node) -> Integer

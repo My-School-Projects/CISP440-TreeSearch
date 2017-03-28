@@ -2,9 +2,7 @@ package com.mdorst;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -12,14 +10,64 @@ public class Main {
     {
         Node root = createTree("triangle_test.txt");
 
-        System.out.println("Test case: " + largestSum(root));
+        System.out.println("Test case (BFS): " + largestSumBFS(root));
+
+        System.out.println("Test case (DFS): " + largestSumDFS(root));
 
         root = createTree("triangle.txt");
 
-        System.out.println("Final answer: " + largestSum(root));
+        System.out.println("Final answer (BFS): " + largestSumBFS(root));
+
+        System.out.println("Final answer (DFS): " + largestSumDFS(root));
     }
 
-    static int largestSum(Node node)
+    static int largestSumBFS(Node node)
+    {
+        Queue<Node> q = new LinkedList<>();
+        int maxCost = 0;
+        node.pathCost = node.value;
+        q.add(node);
+
+        while(!q.isEmpty())
+        {
+            Node n = q.remove();
+
+            if (n.right == null && n.left == null)
+            {
+                // this is a leaf node
+                if (n.pathCost > maxCost)
+                {
+                    maxCost = n.pathCost;
+                }
+                continue;
+            }
+            if (n.right != null)
+            {
+                // calculate the cost of reaching n.right
+                int cost = n.pathCost + n.right.value;
+                // if there isn't already a higher cost path to n.right
+                if (cost > n.right.pathCost)
+                {
+                    // then...
+                    n.right.pathCost = cost;
+                }
+                q.add(n.right);
+            }
+            if (n.left != null)
+            {
+                // do the same for n.left...
+                int cost = n.pathCost + n.left.value;
+                if (cost > n.left.pathCost)
+                {
+                    n.left.pathCost = cost;
+                }
+                q.add(n.left);
+            }
+        }
+        return maxCost;
+    }
+
+    static int largestSumDFS(Node node)
     {
         if (node.left == null && node.right == null)
         {
@@ -27,13 +75,13 @@ public class Main {
         }
         if (node.left == null)
         {
-            return largestSum(node.right) + node.value;
+            return largestSumDFS(node.right) + node.value;
         }
         if (node.right == null)
         {
-            return largestSum(node.left) + node.value;
+            return largestSumDFS(node.left) + node.value;
         }
-        return max(largestSum(node.left), largestSum(node.right)) + node.value;
+        return max(largestSumDFS(node.left), largestSumDFS(node.right)) + node.value;
     }
 
     static int max(int a, int b)
