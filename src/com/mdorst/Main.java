@@ -10,21 +10,22 @@ public class Main {
     {
         Node root = createTree("triangle_test.txt");
 
-        System.out.println("Test case (BFS): " + largestSumBFS(root));
+        System.out.println("Test case (BFS): " + smallestSumBFS(root));
 
-        System.out.println("Test case (DFS): " + largestSumDFS(root));
+        System.out.println("Test case (DFS): " + smallestSumDFS(root));
 
         root = createTree("triangle.txt");
 
-        System.out.println("Final answer (BFS): " + largestSumBFS(root));
+        System.out.println("Final answer (BFS): " + smallestSumBFS(root));
 
-        System.out.println("Final answer (DFS): " + largestSumDFS(root));
+        System.out.println("Final answer (DFS): " + smallestSumDFS(root));
     }
 
-    static int largestSumBFS(Node node)
+    static int smallestSumBFS(Node node)
     {
-        Queue<Node> q = new LinkedList<>();
-        int maxCost = 0;
+        Queue<Node> q = new PriorityQueue<>();
+        // maximum 32-bit integer
+        int minCost = 2147483647;
         node.pathCost = node.value;
         q.add(node);
 
@@ -35,9 +36,9 @@ public class Main {
             if (n.right == null && n.left == null)
             {
                 // this is a leaf node
-                if (n.pathCost > maxCost)
+                if (n.pathCost < minCost)
                 {
-                    maxCost = n.pathCost;
+                    minCost = n.pathCost;
                 }
                 continue;
             }
@@ -45,8 +46,8 @@ public class Main {
             {
                 // calculate the cost of reaching n.right
                 int cost = n.pathCost + n.right.value;
-                // if there isn't already a higher cost path to n.right
-                if (cost > n.right.pathCost)
+                // if there isn't already a lower (non-zero) cost path to n.right
+                if (cost < n.right.pathCost || n.right.pathCost == 0)
                 {
                     // then...
                     n.right.pathCost = cost;
@@ -57,17 +58,17 @@ public class Main {
             {
                 // do the same for n.left...
                 int cost = n.pathCost + n.left.value;
-                if (cost > n.left.pathCost)
+                if (cost < n.left.pathCost || n.left.pathCost == 0)
                 {
                     n.left.pathCost = cost;
                 }
                 q.add(n.left);
             }
         }
-        return maxCost;
+        return minCost;
     }
 
-    static int largestSumDFS(Node node)
+    static int smallestSumDFS(Node node)
     {
         if (node.left == null && node.right == null)
         {
@@ -75,18 +76,18 @@ public class Main {
         }
         if (node.left == null)
         {
-            return largestSumDFS(node.right) + node.value;
+            return smallestSumDFS(node.right) + node.value;
         }
         if (node.right == null)
         {
-            return largestSumDFS(node.left) + node.value;
+            return smallestSumDFS(node.left) + node.value;
         }
-        return max(largestSumDFS(node.left), largestSumDFS(node.right)) + node.value;
+        return min(smallestSumDFS(node.left), smallestSumDFS(node.right)) + node.value;
     }
 
-    static int max(int a, int b)
+    static int min(int a, int b)
     {
-        if (a > b)
+        if (a < b)
             return a;
         else
             return b;
