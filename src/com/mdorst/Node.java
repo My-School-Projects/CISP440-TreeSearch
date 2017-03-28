@@ -10,10 +10,6 @@ class Node implements Comparable<Node> {
 
     @Override
     public int compareTo(Node n) {
-        if (value > n.value)
-            return 1;
-        if (value < n.value)
-            return -1;
-        else return 0;
+        return pathCost - n.pathCost;
     }
 }

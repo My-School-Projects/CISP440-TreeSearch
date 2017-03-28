@@ -19,13 +19,16 @@ public class Main {
         System.out.println("Final answer (BFS): " + smallestSumBFS(root));
 
         System.out.println("Final answer (DFS): " + smallestSumDFS(root));
+
+        root = createTree("big_triangle.txt");
+
+        System.out.println("Big triangle (BFS): " + smallestSumBFS(root));
     }
 
     static int smallestSumBFS(Node node)
     {
         Queue<Node> q = new PriorityQueue<>();
-        // maximum 32-bit integer
-        int minCost = 2147483647;
+
         node.pathCost = node.value;
         q.add(node);
 
@@ -36,11 +39,9 @@ public class Main {
             if (n.right == null && n.left == null)
             {
                 // this is a leaf node
-                if (n.pathCost < minCost)
-                {
-                    minCost = n.pathCost;
-                }
-                continue;
+                // the first path traversed to a leaf node will
+                // be the one with the smallest sum.
+                return n.pathCost;
             }
             if (n.right != null)
             {
@@ -51,8 +52,8 @@ public class Main {
                 {
                     // then...
                     n.right.pathCost = cost;
+                    q.add(n.right);
                 }
-                q.add(n.right);
             }
             if (n.left != null)
             {
@@ -61,11 +62,12 @@ public class Main {
                 if (cost < n.left.pathCost || n.left.pathCost == 0)
                 {
                     n.left.pathCost = cost;
+                    q.add(n.left);
                 }
-                q.add(n.left);
             }
         }
-        return minCost;
+        // should never be reached
+        return -1;
     }
 
     static int smallestSumDFS(Node node)
