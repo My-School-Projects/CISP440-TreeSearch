@@ -23,6 +23,10 @@ public class Main {
         root = createTree("big_triangle.txt");
 
         System.out.println("Big triangle (BFS): " + smallestSumBFS(root));
+
+        resetCosts(root);
+
+        System.out.println("Big triangle (DFS): " + smallestSumDFS(root));
     }
 
     static int smallestSumBFS(Node node)
@@ -76,15 +80,25 @@ public class Main {
         {
             return node.value;
         }
-        if (node.left == null)
+        int leftPathCost;
+        if (node.left.pathCost == 0)
         {
-            return smallestSumDFS(node.right) + node.value;
+            leftPathCost = smallestSumDFS(node.left) + node.value;
         }
-        if (node.right == null)
+        else
         {
-            return smallestSumDFS(node.left) + node.value;
+            leftPathCost = node.left.pathCost;
         }
-        return min(smallestSumDFS(node.left), smallestSumDFS(node.right)) + node.value;
+        int rightPathCost;
+        if (node.right.pathCost == 0)
+        {
+            rightPathCost = smallestSumDFS(node.right) + node.value;
+        }
+        else
+        {
+            rightPathCost = node.right.pathCost;
+        }
+        return node.pathCost = min(leftPathCost, rightPathCost) + node.value;
     }
 
     static int min(int a, int b)
@@ -93,6 +107,19 @@ public class Main {
             return a;
         else
             return b;
+    }
+
+    static void resetCosts(Node node)
+    {
+        node.pathCost = 0;
+        if (node.left != null && node.left.pathCost != 0)
+        {
+            resetCosts(node.left);
+        }
+        if (node.right != null && node.right.pathCost != 0)
+        {
+            resetCosts(node.right);
+        }
     }
 
     static Node createTree(String path)
