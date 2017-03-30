@@ -78,27 +78,17 @@ public class Main {
     {
         if (node.left == null && node.right == null)
         {
-            return node.value;
+            return node.pathCost = node.value;
         }
-        int leftPathCost;
         if (node.left.pathCost == 0)
         {
-            leftPathCost = smallestSumDFS(node.left) + node.value;
+            node.left.pathCost = smallestSumDFS(node.left);
         }
-        else
-        {
-            leftPathCost = node.left.pathCost;
-        }
-        int rightPathCost;
         if (node.right.pathCost == 0)
         {
-            rightPathCost = smallestSumDFS(node.right) + node.value;
+            node.right.pathCost = smallestSumDFS(node.right);
         }
-        else
-        {
-            rightPathCost = node.right.pathCost;
-        }
-        return node.pathCost = min(leftPathCost, rightPathCost) + node.value;
+        return node.pathCost = min(node.left.pathCost, node.right.pathCost) + node.value;
     }
 
     static int min(int a, int b)
